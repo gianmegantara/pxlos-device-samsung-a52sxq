@@ -1,0 +1,85 @@
+#
+# Copyright (C) 2023-2025 The LineageOS Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# call the common setup
+$(call inherit-product, device/samsung/sm7325-common/common.mk)
+
+# call the proprietary setup
+$(call inherit-product, vendor/samsung/a52sxq/a52sxq-vendor.mk)
+
+# Overlay
+PRODUCT_PACKAGES += \
+    FrameworksResDevice \
+    SettingsResDevice \
+    SettingsProviderResDevice \
+    SystemUIResDevice \
+    WifiResDevice
+
+# Init files
+PRODUCT_PACKAGES += \
+    init.a52sxq.rc \
+    wifi_firmware.rc
+
+# Audio
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/audio/mixer_paths.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_paths.xml \
+    $(LOCAL_PATH)/configs/audio/audio_platform_info_diff.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_platform_info_diff.xml \
+
+# Display
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/display/display_id_4630947232161729154.xml:$(TARGET_COPY_OUT_VENDOR)/etc/displayconfig/display_id_4630947232161729154.xml
+
+# Sensors
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/sensors/hals.conf:$(TARGET_COPY_OUT_VENDOR)/etc/sensors/hals.conf
+
+PRODUCT_PACKAGES += \
+    sensors.a52sxq
+
+# Soong namespaces
+PRODUCT_SOONG_NAMESPACES += \
+    $(LOCAL_PATH)
+
+# UDFPS
+$(call soong_config_set,samsungUdfpsVars,udfps_zorder,0x20000000u)
+$(call soong_config_set,surfaceflinger,udfps_lib,//hardware/samsung/fingerprint:libudfps_extension.samsung)
+
+# GApps terintegrasi (gen-gapps-mk.py)
+$(call inherit-product-if-exists, vendor/pixelgapps/gapps.mk)
+
+# Pixel look (gen-pixellook-mk.py)
+$(call inherit-product-if-exists, vendor/pixelgapps/pixellook.mk)
+
+# ThemePicker asli (Wallpaper & style)
+$(call inherit-product-if-exists, vendor/pixelgapps/theme.mk)
+
+# Overlay Pixel aktif otomatis
+$(call inherit-product-if-exists, vendor/pixelgapps/overlay-default.mk)
+
+# Tuning mengikuti Pixel (volume steps)
+$(call inherit-product-if-exists, vendor/pixelgapps/pixel-tuning.mk)
+
+# Suara bawaan Pixel
+$(call inherit-product-if-exists, vendor/pixelgapps/pixel-audio.mk)
+
+# Sysconfig force-queryable (Play Store)
+$(call inherit-product-if-exists, vendor/pixelgapps/sysconfig.mk)
+
+# Server OTA PXLOS
+$(call inherit-product-if-exists, vendor/pixelgapps/ota.mk)
+
+# PXLOS release signing
+$(call inherit-product-if-exists, vendor/pxlos/pxlos-signing.mk)
